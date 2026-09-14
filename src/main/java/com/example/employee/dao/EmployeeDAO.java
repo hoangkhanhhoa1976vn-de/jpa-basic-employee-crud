@@ -81,4 +81,68 @@ public class EmployeeDAO {
             }
         }
     }
+
+    /**
+     * TODO 0.5 — READ có điều kiện (JPQL): Tìm nhân viên theo email.
+     * - Dùng để kiểm tra trùng email trước khi tạo mới
+     * - Sử dụng setParameter("email", email) chống JPQL Injection
+     *
+     * @param email Địa chỉ email cần tìm
+     * @return Employee nếu tìm thấy, hoặc null nếu không có
+     */
+    public Employee findByEmail(String email) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            jakarta.persistence.TypedQuery<Employee> query = 
+                    em.createQuery("SELECT e FROM Employee e WHERE e.email = :email", Employee.class);
+            query.setParameter("email", email);
+            return query.getResultStream().findFirst().orElse(null);
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+    }
+
+    /**
+     * TODO 0.5 — READ có điều kiện (JPQL): Tìm danh sách nhân viên có lương lớn hơn minSalary.
+     * - Sử dụng setParameter("minSalary", minSalary) chống JPQL Injection
+     *
+     * @param minSalary Mức lương tối thiểu cần lọc
+     * @return Danh sách nhân viên thỏa mãn điều kiện lương > minSalary
+     */
+    public java.util.List<Employee> findBySalaryGreaterThan(java.math.BigDecimal minSalary) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            jakarta.persistence.TypedQuery<Employee> query = 
+                    em.createQuery("SELECT e FROM Employee e WHERE e.salary > :minSalary ORDER BY e.salary DESC", Employee.class);
+            query.setParameter("minSalary", minSalary);
+            return query.getResultList();
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+    }
+
+    /**
+     * TODO 0.5 — READ có điều kiện (JPQL): Tìm danh sách nhân viên theo trạng thái làm việc (active).
+     * - Sử dụng setParameter("active", active) chống JPQL Injection
+     *
+     * @param active Trạng thái làm việc (true/false)
+     * @return Danh sách nhân viên tương ứng
+     */
+    public java.util.List<Employee> findByActive(boolean active) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            jakarta.persistence.TypedQuery<Employee> query = 
+                    em.createQuery("SELECT e FROM Employee e WHERE e.active = :active", Employee.class);
+            query.setParameter("active", active);
+            return query.getResultList();
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+    }
 }
