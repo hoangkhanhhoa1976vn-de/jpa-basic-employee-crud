@@ -145,4 +145,36 @@ public class EmployeeDAO {
             }
         }
     }
+
+    /**
+     * TODO 0.6 — UPDATE: Cập nhật thông tin một nhân viên đã tồn tại.
+     * - Mở transaction (tx.begin())
+     * - Dùng em.merge(e) và gán lại kết quả (e = em.merge(e)), vì object truyền vào
+     *   có thể đang ở trạng thái Detached.
+     * - Commit transaction (tx.commit())
+     * - Có rollback() trong catch nếu lỗi
+     * - Đóng EntityManager trong finally
+     *
+     * @param e Đối tượng Employee cần cập nhật (thường ở trạng thái Detached)
+     * @return Đối tượng Employee sau khi merge (ở trạng thái Managed)
+     */
+    public Employee update(Employee e) {
+        EntityManager em = JPAUtil.getEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Employee updated = em.merge(e);
+            tx.commit();
+            return updated;
+        } catch (Exception ex) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
+            throw new RuntimeException("Lỗi khi cập nhật Employee: " + ex.getMessage(), ex);
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+    }
 }
