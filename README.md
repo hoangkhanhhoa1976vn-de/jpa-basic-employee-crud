@@ -132,6 +132,18 @@ GO
 - [x] In kết quả chi tiết từng bước ra màn hình bằng `System.out.println`.
 - [x] Luồng chạy mượt mà, không phát sinh bất kỳ ngoại lệ nào.
 
+### TODO 0.9 — Kiểm chứng ràng buộc UNIQUE trên email
+- [x] Cố ý tạo 2 Employee cùng email và gọi `save()`.
+- [x] Lần `save()` thứ 2 bị MSSQL và Hibernate chặn lại bằng ngoại lệ duplicate key / unique constraint.
+- [x] Bắt ngoại lệ bằng try/catch trong `Main` (không để crash chương trình) và in thông báo lỗi rõ ràng.
+
+### TODO 0.10 — Giải thích Entity Lifecycle (bắt buộc viết comment)
+- [x] Tại mỗi bước trong `Main.java`, ghi chú rõ ràng trạng thái của entity trong chu trình sống:
+  - **New / Transient**: Vừa được khởi tạo bằng `new`, chưa có ID, chưa gắn với `EntityManager`.
+  - **Managed**: Đang được `EntityManager` theo dõi và quản lý (sau khi gọi `persist()` hoặc trong câu lệnh `find()`).
+  - **Detached**: Khi `EntityManager` đã đóng (`close()`) hoặc đối tượng trước khi truyền vào `merge()`.
+  - **Removed**: Khi gọi `em.remove()`, entity được đánh dấu sẽ bị xóa khỏi DB khi commit transaction.
+
 ---
 
 ## 5. Hướng dẫn mở và chạy dự án trên IntelliJ IDEA

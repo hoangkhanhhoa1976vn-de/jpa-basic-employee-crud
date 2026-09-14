@@ -153,4 +153,18 @@ public class EmployeeDAOTest {
         boolean deleteAgain = dao.delete(id);
         assertFalse(deleteAgain, "Xóa ID không còn tồn tại phải trả về false");
     }
+
+    @Test
+    @Order(6)
+    @DisplayName("TODO 0.9: Kiểm chứng ràng buộc UNIQUE trên cột email phải ném exception")
+    public void testUniqueEmailConstraint() {
+        String sharedEmail = "duplicate." + System.nanoTime() + "@company.com";
+        Employee emp1 = new Employee("A", sharedEmail, new BigDecimal("10000000"), Gender.MALE, LocalDate.now(), true);
+        dao.save(emp1);
+
+        Employee emp2 = new Employee("B", sharedEmail, new BigDecimal("12000000"), Gender.FEMALE, LocalDate.now(), true);
+        assertThrows(RuntimeException.class, () -> {
+            dao.save(emp2);
+        }, "Lưu nhân viên với email trùng phải ném ngoại lệ RuntimeException/PersistenceException");
+    }
 }
