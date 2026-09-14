@@ -40,4 +40,45 @@ public class EmployeeDAO {
             }
         }
     }
+
+    /**
+     * TODO 0.4 — READ: Tìm kiếm nhân viên theo ID.
+     * - Dùng em.find(Employee.class, id)
+     * - Trả về null nếu không tồn tại (không ném ngoại lệ)
+     * - Tự mở và đóng EntityManager riêng
+     *
+     * @param id Khóa chính của nhân viên
+     * @return Đối tượng Employee tìm thấy hoặc null
+     */
+    public Employee findById(Long id) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.find(Employee.class, id);
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+    }
+
+    /**
+     * TODO 0.4 — READ: Lấy danh sách tất cả nhân viên.
+     * - Dùng câu lệnh JPQL "SELECT e FROM Employee e"
+     * - Trả về List<Employee>
+     * - Tự mở và đóng EntityManager riêng
+     *
+     * @return Danh sách tất cả nhân viên
+     */
+    public java.util.List<Employee> findAll() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            jakarta.persistence.TypedQuery<Employee> query = 
+                    em.createQuery("SELECT e FROM Employee e", Employee.class);
+            return query.getResultList();
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+    }
 }
