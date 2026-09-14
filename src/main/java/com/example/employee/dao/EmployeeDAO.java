@@ -177,4 +177,42 @@ public class EmployeeDAO {
             }
         }
     }
+
+    /**
+     * TODO 0.7 — DELETE: Xóa một nhân viên theo id.
+     * - Mở transaction (tx.begin())
+     * - Dùng em.find() ra entity trước
+     * - Kiểm tra != null rồi mới gọi em.remove(...) (tránh remove(null) hoặc remove entity không managed)
+     * - Commit transaction
+     * - Rollback nếu lỗi, close trong finally
+     * - Sau khi xóa, gọi findById(id) sẽ trả về null
+     *
+     * @param id Khóa chính của nhân viên cần xóa
+     * @return true nếu xóa thành công, false nếu không tìm thấy nhân viên
+     */
+    public boolean delete(Long id) {
+        EntityManager em = JPAUtil.getEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Employee employee = em.find(Employee.class, id);
+            if (employee != null) {
+                em.remove(employee);
+                tx.commit();
+                return true;
+            } else {
+                tx.rollback();
+                return false;
+            }
+        } catch (Exception ex) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
+            throw new RuntimeException("Lỗi khi xóa Employee id=" + id + ": " + ex.getMessage(), ex);
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+    }
 }
